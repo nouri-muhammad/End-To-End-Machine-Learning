@@ -1,0 +1,11 @@
+scikit-learn
+statsmodels
+pandas
+numpy
+matplotlib
+seaborn
+catboost
+xgboost
+dill
+inquirer
+-e .
