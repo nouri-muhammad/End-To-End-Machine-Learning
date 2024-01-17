@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from src.exception import CustomException
 from src.logger import logging
 from src.utils import null_row_dropper, duplicate_dropper, invalid_data_dropper, outlier_detection
+from src.components.data_transformation import DataTransformationConfig, DataTransformation
 
 
 @dataclass
@@ -46,6 +47,10 @@ class DataIngestion:
             columns = ['Price', 'Year', 'Mileage']
             df = outlier_detection(df=df, columns=columns, threshold=3)
 
+            logging.info("Dropping two columns")
+            df.drop(columns=['Registration'], axis=1, inplace=True)
+            df.drop(columns=['Model'], axis=1, inplace=True)
+
             # creating the folder for saving train and test datasets
             os.makedirs(os.path.dirname(self.ingestion_config.raw_data_path), exist_ok=True)
             # exists_ok=True means if the folder exists do noting, otherwise create it
@@ -59,6 +64,7 @@ class DataIngestion:
             test_set.to_csv(self.ingestion_config.test_data_path, index=False, header=True)
             
             logging.info("Ingestion Process is Completed")
+
             return(
                 self.ingestion_config.train_data_path,
                 self.ingestion_config.test_data_path,
@@ -70,4 +76,7 @@ class DataIngestion:
 
 if __name__=='__main__':
     obj = DataIngestion()
-    obj.initiate_data_ingestion()
+    train_data, test_data, raw_data = obj.initiate_data_ingestion()
+    data_transformation = DataTransformation()
+    data_transformation.initiate_data_transformation(train_data, test_data)
+

@@ -6,6 +6,16 @@ import sys
 from src.exception import CustomException
 
 
+def save_object(file_path, obj):
+    try:
+        dir_path = os.path.dirname(file_path)
+        os.makedirs(dir_path, exist_ok=True)
+        with open(file=file_path, mode="wb") as file_obj:
+            dill.dump(obj, file_obj)
+    except Exception as e:
+        raise CustomException(e, sys)
+
+
 def null_row_dropper(file_obj, columns):
     file_obj = file_obj.dropna(subset=columns).reset_index(drop=True)
     return file_obj
@@ -32,6 +42,6 @@ def outlier_detection(df: pd.DataFrame, columns: list, threshold: float):
     lower_limit = (-1) * threshold
     for column in columns:
         df['z_score'] = (df[column] - df[column].mean()) / df[column].std()
-        df = df[(df['z_score'] < upper_limit) & (df['z_score'] > lower_limit)]
+        df = df[(df['z_score'] < upper_limit) & (df['z_score'] > lower_limit)].reset_index(drop=True)
         df = df.drop(columns='z_score', axis=1)
     return df
