@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from sklearn.model_selection import train_test_split
 from src.exception import CustomException
 from src.logger import logging
+from src.utils import null_row_dropper, duplicate_dropper, invalid_data_dropper, outlier_detection
 
 
 @dataclass
@@ -25,10 +26,25 @@ class DataIngestion:
         """
         logging.info("Initiated Data Ingestion")
         try:
-            df=pd.read_csv("data/UsedCars.csv")
+            data=pd.read_csv("data/UsedCars.csv")
+            df=data.copy()
             logging.info("Read the dataset")
             # here we read the data from a csv file
             # by chaanging this part we can read the data from other sources
+
+            logging.info("Dropping rows with null values")
+            null_drop_columns = ['EngineV', 'Price']
+            df = null_row_dropper(df, null_drop_columns)
+
+            logging.info("Dropping Duplicate Data")
+            df = duplicate_dropper(df)
+
+            logging.info("Dropping Invalid Data From EngineV Column")
+            df = invalid_data_dropper(df)
+
+            logging.info("Dropping Outliers")
+            columns = ['Price', 'Year', 'Mileage']
+            df = outlier_detection(df=df, columns=columns, threshold=3)
 
             # creating the folder for saving train and test datasets
             os.makedirs(os.path.dirname(self.ingestion_config.raw_data_path), exist_ok=True)
@@ -50,3 +66,8 @@ class DataIngestion:
             )
         except Exception as e:
             raise CustomException(e, sys)
+
+
+if __name__=='__main__':
+    obj = DataIngestion()
+    obj.initiate_data_ingestion()

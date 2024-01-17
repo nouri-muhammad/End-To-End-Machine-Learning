@@ -1,4 +1,4 @@
-﻿Brand,Price,Body,Mileage,EngineV,Engine_Type,Year,Model
+﻿Brand,Price,Body,Mileage,EngineV,Engine_Type,Registration,Year,Model
 BMW,4200,sedan,277,2,Petrol,yes,1991,320
 Mercedes-Benz,7900,van,427,2.9,Diesel,yes,1999,Sprinter 212
 Mercedes-Benz,13300,sedan,358,5,Gas,yes,2003,S 500
