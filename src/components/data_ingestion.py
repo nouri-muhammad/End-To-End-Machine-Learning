@@ -7,7 +7,7 @@ from src.exception import CustomException
 from src.logger import logging
 from src.utils import null_row_dropper, duplicate_dropper, invalid_data_dropper, outlier_detection
 from src.components.data_transformation import DataTransformationConfig, DataTransformation
-
+from src.components.model_trainer import ModelTrainerConfig, ModelTrainer
 
 @dataclass
 class DataIngestionConfig:
@@ -77,6 +77,11 @@ class DataIngestion:
 if __name__=='__main__':
     obj = DataIngestion()
     train_data, test_data, raw_data = obj.initiate_data_ingestion()
+    
     data_transformation = DataTransformation()
-    data_transformation.initiate_data_transformation(train_data, test_data)
-
+    train_arr, test_arr, _ = data_transformation.initiate_data_transformation(train_data, test_data)
+    
+    model_trainer = ModelTrainer()
+    result = model_trainer.initiate_model_trainer(train_array=train_arr, test_array=test_arr)
+    print(result)
+    

@@ -3,7 +3,10 @@ import numpy as np
 import pandas as pd 
 import os 
 import sys
+from sklearn.metrics import r2_score
+from sklearn.model_selection import GridSearchCV
 from src.exception import CustomException
+from src.logger import logging
 
 
 def save_object(file_path, obj):
@@ -45,3 +48,28 @@ def outlier_detection(df: pd.DataFrame, columns: list, threshold: float):
         df = df[(df['z_score'] < upper_limit) & (df['z_score'] > lower_limit)].reset_index(drop=True)
         df = df.drop(columns='z_score', axis=1)
     return df
+
+
+def evaluate_models(x_train, y_train, x_test, y_test, models, params):
+    try:
+        report = {}
+        fitters = {}
+        for name, model in models.items():
+            regr = model
+            gs = GridSearchCV(regr, params[name], cv=3)
+            gs.fit(x_train ,y_train)
+
+            regr.set_params(**gs.best_params_)
+            regr.fit(x_train ,y_train)
+            
+            y_test_pred = regr.predict(x_test)
+
+            test_model_score = r2_score(y_test, y_test_pred)
+
+            report[name] = test_model_score
+            fitters[name] = regr
+            logging.info(f"Model: {name} Uptimization is Done!")
+
+        return report, fitters
+    except Exception as e:
+        raise CustomException(e, sys)
