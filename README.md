@@ -7,7 +7,7 @@ The process has 3 steps:
   4.  create a pickle file of the model to be used easily in the future for prediction.
 # How to run
 1.  create a conda venv and activate it:
-    conda create .venv myenv python={python version}
+    conda create -p .venv myenv python={python version}
     conda activate .venv/
 2.  run the following:
     pip install -r requirements.txt  => It is to install all requirements
